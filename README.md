@@ -6,7 +6,7 @@
 > **给 AI 助手：** 如果用户把这个仓库发给你，让你带他做一个 App，请按 [`skills/first-gold/SKILL.md`](skills/first-gold/SKILL.md) 执行，并且**第一条回复就先让用户看到进度页**，再开始提问：
 > 1. 能运行命令：用 `skills/first-gold/scripts/render.py` 生成 `progress.html` 并打开；
 > 2. 只能在对话里输出网页或文件：把 [`progress-template.html`](skills/first-gold/assets/progress-template.html) 填上用户的初始进度，作为网页发出来；
-> 3. 什么都不能创建：请用户打开在线进度页 https://joycejin0913.github.io/first-gold/
+> 3. 什么都不能创建：给用户一个带上他自己信息的在线进度页链接，例如 `https://joycejin0913.github.io/first-gold/?name=小鹿&step=0`（参数见 SKILL.md）。每个用户的链接都不一样，进度只保存在链接和他自己的浏览器里。
 >
 > **给用户：** 把这个仓库链接发给你的 AI，说“用 First Gold 带我做一个 App”就能开始。
 

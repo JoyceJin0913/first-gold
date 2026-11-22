@@ -210,7 +210,48 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
     for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
     return JSON.parse(new TextDecoder('utf-8').decode(bytes));
   }
-  try { D = fromHash() || JSON.parse(document.getElementById('fg-data').textContent); }
+  // Readable link parameters, so an assistant without code can still build a personal link:
+  // ?name=小鹿&project=简历面经雷达&one=一句话需求&step=1&identity=...&expertise=...&reach=...&done=1.1,1.2&note=...
+  function fromParams(base){
+    var raw = (location.search || '').replace(/^\?/, '');
+    var h = (location.hash || '').replace(/^#/, '');
+    if (h && !/(^|&)d=/.test(h)) raw = raw ? raw + '&' + h : h;
+    if (!raw) return null;
+    var q = {};
+    raw.split('&').forEach(function(kv){ if (!kv) return; var i = kv.indexOf('='); var k = decodeURIComponent((i < 0 ? kv : kv.slice(0, i)).replace(/\+/g, ' ')); var v = i < 0 ? '' : decodeURIComponent(kv.slice(i + 1).replace(/\+/g, ' ')); q[k] = v; });
+    var keys = ['name','project','one','step','identity','expertise','reach','done','note'];
+    if (!keys.some(function(k){ return q[k] !== undefined; })) return null;
+    var d = JSON.parse(JSON.stringify(base));
+    if (q.name) d.owner = q.name;
+    if (q.project) d.project = q.project;
+    if (q.one) d.one_liner = q.one;
+    d.profile = d.profile || {};
+    if (q.identity) d.profile.identity = q.identity;
+    if (q.expertise) d.profile.expertise = q.expertise;
+    if (q.reach) d.profile.reach = q.reach;
+    var step = q.step !== undefined ? Math.max(0, Math.min(5, parseInt(q.step, 10) || 0)) : (d.current_step || 0);
+    d.current_step = step;
+    var done = {};
+    (q.done || '').split(',').forEach(function(x){ x = x.trim(); if (x) done[x] = true; });
+    (d.steps || []).forEach(function(st){
+      st.status = st.id < step ? 'done' : (st.id === step ? 'in-progress' : 'not-started');
+      (st.checklist || []).forEach(function(c, i){ c.done = st.id < step || !!done[st.id + '.' + (i + 1)]; });
+      if (st.id === step && q.note) st.note = q.note;
+    });
+    var today = new Date(); var pad = function(n){ return (n < 10 ? '0' : '') + n; };
+    d.updated = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+    return d;
+  }
+  var STORE = 'first-gold-progress';
+  function remember(d){ try { localStorage.setItem(STORE, JSON.stringify(d)); } catch (e) {} }
+  function recall(){ try { var t = localStorage.getItem(STORE); return t ? JSON.parse(t) : null; } catch (e) { return null; } }
+  var onlinePage = /github\.io$/.test(location.hostname);
+  try {
+    var embedded = JSON.parse(document.getElementById('fg-data').textContent);
+    D = fromHash() || fromParams(embedded);
+    if (D) { if (onlinePage) remember(D); }
+    else D = (onlinePage && recall()) || embedded;
+  }
   catch (e) { document.getElementById('app').innerHTML = '<p style="padding:40px">progress.json 格式有误，无法显示进度：' + String(e.message).replace(/</g,'&lt;') + '</p>'; return; }
 
   var STATUS = {"done":"已完成","in-progress":"进行中","not-started":"未开始","skipped":"已跳过"};

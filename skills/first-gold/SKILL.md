@@ -15,7 +15,9 @@ description: "First Gold：根据档案找到你的第一个 AI 产品方向，�
 
 1. **能运行命令、能写文件**（Claude Code、Codex、CodeBuddy 等）：按下方“启动”一节建好 `first-gold/my-first-product/progress.json`，运行 `scripts/render.py`，在用户电脑上打开 `progress.html`；打不开就把文件发给用户。
 2. **不能运行命令，但能在对话里输出网页或文件**（Artifact、Canvas、文件附件等）：读取 `assets/progress-template.html`（在线地址：`https://raw.githubusercontent.com/JoyceJin0913/first-gold/main/skills/first-gold/assets/progress-template.html`），把 `<script id="fg-data" type="application/json">` 里的数据换成这位用户的初始进度，作为一个可预览的网页发给用户。
-3. **什么都不能创建**：把在线进度页的链接发给用户，请他先打开：`https://joycejin0913.github.io/first-gold/`
+3. **什么都不能创建**：给用户一个**带上他自己信息**的在线进度页链接，每个用户的链接都不一样，例如：
+   `https://joycejin0913.github.io/first-gold/?name=小鹿&step=1&identity=大三金融专业&expertise=实习求职&reach=同专业群&done=1.2&note=正在打分`
+   参数：`name` 称呼、`project` 项目名、`one` 一句话需求、`step` 当前步骤（0 = 建立档案，1–4，5 = 冲刺第一桶金）、`identity` / `expertise` / `reach` 档案三项、`done` 当前步骤已完成的清单项（如 `1.2` 表示第 1 步第 2 项，用逗号分隔）、`note` 当前步骤的一句话现状。刚开始什么都不知道时，至少带上 `name` 和 `step=0`。页面会记住用户在自己浏览器里最近一次打开的进度。
 
 之后每完成一轮，都用同样的方式更新进度页。
 
