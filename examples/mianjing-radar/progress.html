@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>First Gold · 我的第一桶金进度</title>
+<style>
+:root{
+  --bg:#FFF9F3;
+  --card:#FFFFFF;
+  --ink:#2B211B;
+  --ink-2:#6E5F55;
+  --ink-3:#A8988C;
+  --line:#F2E4D7;
+  --orange:#E8730C;
+  --orange-deep:#C2570F;
+  --soft:#FDECDC;
+  --gold-1:#F7C948;
+  --gold-2:#D9921A;
+  --radius:16px;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);line-height:1.6;min-height:100vh;
+  background-image:radial-gradient(800px 420px at 85% -10%,rgba(232,115,12,.14),transparent 60%),
+                   radial-gradient(600px 380px at -10% 20%,rgba(247,201,72,.16),transparent 60%);}
+.wrap{max-width:980px;margin:0 auto;padding:40px 24px 64px}
+.eyebrow{font-size:12px;letter-spacing:.18em;color:var(--orange-deep);font-weight:700}
+header{display:flex;gap:28px;align-items:center;justify-content:space-between;margin-bottom:28px}
+h1{font-size:32px;line-height:1.25;margin:6px 0 8px;font-weight:800}
+.one-liner{color:var(--ink-2);font-size:16px;max-width:620px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.75);border:1px solid var(--line);padding:4px 10px;border-radius:999px}
+.chip b{color:var(--ink)}
+.ring{flex:0 0 auto;position:relative;width:132px;height:132px}
+.ring svg{transform:rotate(-90deg)}
+.ring .num{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .num strong{font-size:30px;font-weight:800;color:var(--orange-deep);line-height:1}
+.ring .num span{font-size:12px;color:var(--ink-3);margin-top:4px}
+
+/* journey */
+.journey{display:flex;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px 18px;margin-bottom:22px;box-shadow:0 8px 24px rgba(194,87,15,.06)}
+.node{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;min-width:0}
+.node:not(:last-child)::after{content:"";position:absolute;top:21px;left:calc(50% + 26px);right:calc(-50% + 26px);height:3px;border-radius:3px;background:var(--line)}
+.node.done:not(:last-child)::after{background:linear-gradient(90deg,var(--orange),var(--gold-1))}
+.dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;
+  background:#F6EEE7;color:var(--ink-3);border:2px solid transparent;position:relative;z-index:1;transition:all .3s var(--ease)}
+.node.done .dot{background:var(--orange);color:#fff}
+.node.in-progress .dot{background:#fff;color:var(--orange-deep);border-color:var(--orange);animation:pulse 2s infinite}
+.node.skipped .dot{background:#fff;border:2px dashed var(--ink-3)}
+.node.gold .dot{background:#F6EEE7;font-size:20px}
+.node.gold.done .dot{background:linear-gradient(135deg,var(--gold-1),var(--gold-2));color:#fff;box-shadow:0 0 0 6px rgba(247,201,72,.25)}
+.node .label{margin-top:10px;font-size:14px;font-weight:700}
+.node .sub{font-size:12px;color:var(--ink-3)}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(232,115,12,.35)}70%{box-shadow:0 0 0 12px rgba(232,115,12,0)}100%{box-shadow:0 0 0 0 rgba(232,115,12,0)}}
+
+/* cards */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px 20px 18px;transition:transform .2s var(--ease),box-shadow .2s var(--ease)}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(194,87,15,.08)}
+.card.in-progress{border-color:rgba(232,115,12,.55);box-shadow:0 0 0 3px rgba(232,115,12,.08)}
+.card.not-started{opacity:.72}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.badge{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--orange-deep);font-weight:800;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto}
+.card.done .badge{background:var(--orange);color:#fff}
+.card h2{font-size:18px;font-weight:800;flex:1}
+.pill{font-size:12px;padding:2px 10px;border-radius:999px;font-weight:600;white-space:nowrap}
+.pill.done{background:var(--orange);color:#fff}
+.pill.in-progress{background:var(--soft);color:var(--orange-deep)}
+.pill.not-started{background:#F4EFEA;color:var(--ink-3)}
+.pill.skipped{background:#fff;color:var(--ink-3);border:1px dashed var(--ink-3)}
+.note{font-size:13px;color:var(--ink-2);background:#FFF6EE;border-radius:10px;padding:8px 10px;margin-bottom:12px}
+.check{list-style:none;margin-bottom:14px}
+.check li{display:flex;gap:9px;align-items:flex-start;font-size:14px;padding:4px 0}
+.box{width:18px;height:18px;border-radius:5px;border:2px solid #E4D3C4;flex:0 0 auto;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:800}
+.check li.done .box{background:var(--orange);border-color:var(--orange)}
+.check li.done span.t{color:var(--ink-2)}
+.section-title{font-size:12px;color:var(--ink-3);letter-spacing:.06em;margin:10px 0 6px;font-weight:700}
+.kv{font-size:14px;margin:2px 0}
+.kv em{font-style:normal;color:var(--ink-3);margin-right:6px}
+.scores .row{display:flex;align-items:center;gap:10px;font-size:13px;margin:4px 0}
+.scores .row span.l{flex:1;color:var(--ink-2)}
+.pips{display:flex;gap:4px}
+.pip{width:22px;height:8px;border-radius:4px;background:#F1E6DC}
+.pip.on{background:linear-gradient(90deg,var(--orange),var(--gold-1))}
+.scores .total{font-size:13px;margin-top:6px;font-weight:700;color:var(--orange-deep)}
+.loops{list-style:none}
+.loops li{display:flex;align-items:center;gap:8px;font-size:14px;padding:5px 0;border-bottom:1px dashed var(--line)}
+.loops li:last-child{border-bottom:none}
+.tag{font-size:11px;padding:1px 8px;border-radius:999px;background:#F4EFEA;color:var(--ink-3);white-space:nowrap}
+.tag.doing{background:var(--soft);color:var(--orange-deep)}
+.tag.done{background:var(--orange);color:#fff}
+.loops li .n{flex:1}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.metric{background:#FFF6EE;border-radius:10px;padding:8px 10px}
+.metric b{display:block;font-size:20px;font-weight:800;color:var(--ink)}
+.metric span{font-size:12px;color:var(--ink-3)}
+.bar{height:10px;border-radius:999px;background:#F1E6DC;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--gold-1));border-radius:999px;transition:width .6s var(--ease)}
+.small{font-size:12px;color:var(--ink-3)}
+.timeline{list-style:none;border-left:2px solid var(--line);margin-left:4px;padding-left:12px}
+.timeline li{font-size:13px;margin:6px 0;position:relative}
+.timeline li::before{content:"";position:absolute;left:-17px;top:7px;width:8px;height:8px;border-radius:50%;background:var(--orange)}
+.timeline li b{color:var(--ink)}
+.outputs{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.outputs a{font-size:12px;text-decoration:none;color:var(--orange-deep);background:var(--soft);padding:3px 10px;border-radius:999px}
+.outputs a:hover{background:#FADBC0}
+a.link{color:var(--orange-deep)}
+
+/* first gold */
+.gold-banner{margin:22px 0;border-radius:var(--radius);padding:22px 24px;display:flex;gap:18px;align-items:center;border:1px dashed #E8CFA8;background:rgba(255,255,255,.7)}
+.gold-banner .medal{font-size:40px;filter:grayscale(1);opacity:.5}
+.gold-banner h3{font-size:18px;font-weight:800}
+.gold-banner p{font-size:14px;color:var(--ink-2)}
+.gold-banner.done{border:none;background:linear-gradient(120deg,#FFF1C9,#FFD98A 55%,#F7B955);box-shadow:0 12px 30px rgba(217,146,26,.25)}
+.gold-banner.done .medal{filter:none;opacity:1}
+.gold-banner.done h3{color:#7A4A05}
+
+/* log */
+.log{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px}
+.log h2{font-size:16px;margin-bottom:8px}
+.log ul{list-style:none}
+.log li{display:flex;gap:12px;font-size:13px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.log li:last-child{border-bottom:none}
+.log li time{color:var(--ink-3);flex:0 0 88px}
+footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
+.empty{font-size:13px;color:var(--ink-3)}
+
+@media (max-width:760px){
+  .grid{grid-template-columns:1fr}
+  header{flex-direction:column-reverse;align-items:flex-start}
+  h1{font-size:26px}
+  .journey{overflow-x:auto}
+  .node{min-width:72px}
+  .node .label{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+
+<!-- 数据区：由 scripts/render.py 写入 progress.json 的内容。不要修改下面这行之外的结构。 -->
+<script id="fg-data" type="application/json">
+{
+  "version": 1,
+  "project": "简历面经雷达",
+  "slug": "mianjing-radar",
+  "one_liner": "帮准备暑期实习的大三同学，上传简历就自动找到对应岗位的面经，不用再一篇篇翻收藏夹。",
+  "owner": "小鹿（示例用户）",
+  "started": "2026-11-15",
+  "updated": "2026-11-22",
+  "current_step": 2,
+  "steps": [
+    {
+      "id": 1,
+      "name": "找方向",
+      "status": "done",
+      "note": "从 3 个候选里选了面经雷达：自己正在找实习，每天都要翻面经。",
+      "checklist": [
+        {
+          "text": "四条标准打分：前三条每条至少 1 分，总分至少 5 分",
+          "done": true
+        },
+        {
+          "text": "写出一句话需求",
+          "done": true
+        },
+        {
+          "text": "说出 1 个具体的目标用户",
+          "done": true
+        }
+      ],
+      "outputs": [
+        {
+          "label": "方向卡",
+          "path": "01-方向卡.md"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "搭架构",
+      "status": "in-progress",
+      "note": "可点击的 demo 已经确认，正在开发第一个闭环：分析简历。",
+      "checklist": [
+        {
+          "text": "有交互 UI 图",
+          "done": true
+        },
+        {
+          "text": "有可点击的前端 demo，并且自己确认了流程",
+          "done": true
+        },
+        {
+          "text": "拆出至少 3 个最小闭环",
+          "done": true
+        },
+        {
+          "text": "第一个闭环跑通",
+          "done": false
+        }
+      ],
+      "outputs": [
+        {
+          "label": "架构文档",
+          "path": "02-架构.md"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "宣发拉群",
+      "status": "not-started",
+      "note": "",
+      "checklist": [
+        {
+          "text": "宣发文案定稿",
+          "done": false
+        },
+        {
+          "text": "至少在 1 个渠道发布，并记录了链接",
+          "done": false
+        },
+        {
+          "text": "反馈群已经建好",
+          "done": false
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": 4,
+      "name": "反馈迭代",
+      "status": "not-started",
+      "note": "",
+      "checklist": [
+        {
+          "text": "访问统计已经上线（只看汇总数据）",
+          "done": false
+        },
+        {
+          "text": "完成 10 个用户访谈",
+          "done": false
+        },
+        {
+          "text": "写完第一份周迭代记录",
+          "done": false
+        }
+      ],
+      "outputs": []
+    }
+  ],
+  "direction": {
+    "scores": [
+      {
+        "label": "懂这个领域",
+        "score": 1
+      },
+      {
+        "label": "真需求且自己会一直用",
+        "score": 2
+      },
+      {
+        "label": "能触达前 100 个用户",
+        "score": 2
+      },
+      {
+        "label": "结合热点",
+        "score": 1
+      }
+    ],
+    "target_user": "大三金融专业、正在投暑期实习的同学，每天睡前在小红书翻面经，收藏了几百篇但找不到想要的那篇。"
+  },
+  "loops": [
+    {
+      "name": "分析简历，推断 3 个适合的岗位方向",
+      "status": "doing"
+    },
+    {
+      "name": "按岗位关键词抓取小红书面经",
+      "status": "todo"
+    },
+    {
+      "name": "把面经和简历匹配，按相关度排序",
+      "status": "todo"
+    }
+  ],
+  "launch": {
+    "posts": [],
+    "group": {
+      "name": "",
+      "members": 0
+    }
+  },
+  "metrics": {
+    "uv": null,
+    "dau": null,
+    "retention": "",
+    "interviews_done": 0,
+    "interviews_target": 10
+  },
+  "iterations": [],
+  "first_gold": {
+    "done": false,
+    "amount": "",
+    "date": "",
+    "source": ""
+  },
+  "log": [
+    {
+      "date": "2026-11-15",
+      "text": "建立档案：金融专业，身边都是在找实习的同学。"
+    },
+    {
+      "date": "2026-11-16",
+      "text": "列出 3 个候选方向，打分后选定“简历面经雷达”（6/8 分）。"
+    },
+    {
+      "date": "2026-11-18",
+      "text": "画出 4 个关键页面的线框图。"
+    },
+    {
+      "date": "2026-11-20",
+      "text": "做好可点击的 demo，自己点了一遍，把“上传简历”挪到了首页。"
+    },
+    {
+      "date": "2026-11-22",
+      "text": "拆出 3 个最小闭环，开始开发第一个：分析简历。"
+    }
+  ]
+}
+</script>
+
+<script>
+(function(){
+  var D;
+  try { D = JSON.parse(document.getElementById('fg-data').textContent); }
+  catch (e) { document.getElementById('app').innerHTML = '<p style="padding:40px">progress.json 格式有误，无法显示进度：' + String(e.message).replace(/</g,'&lt;') + '</p>'; return; }
+
+  var STATUS = {"done":"已完成","in-progress":"进行中","not-started":"未开始","skipped":"已跳过"};
+  var LOOP = {"todo":"待开发","doing":"开发中","done":"已完成"};
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function safeHref(p){ p = String(p||''); return /^(javascript|data|vbscript):/i.test(p.trim()) ? '#' : esc(p); }
+  function arr(x){ return Array.isArray(x) ? x : []; }
+  function has(v){ return v !== null && v !== undefined && v !== ''; }
+
+  var steps = arr(D.steps);
+  var total = 0, done = 0;
+  steps.forEach(function(s){ arr(s.checklist).forEach(function(c){ total++; if (c.done) done++; }); });
+  var pct = total ? Math.round(done / total * 100) : 0;
+  var cur = D.current_step || 1;
+  var fg = D.first_gold || {};
+
+  var h = '';
+  // header
+  var R = 56, C = 2 * Math.PI * R, off = C * (1 - pct / 100);
+  h += '<header><div>';
+  h += '<div class="eyebrow">FIRST GOLD · 第一桶金进度</div>';
+  h += '<h1>' + esc(D.project || '我的第一个 AI 产品') + '</h1>';
+  if (has(D.one_liner)) h += '<p class="one-liner">' + esc(D.one_liner) + '</p>';
+  h += '<div class="chips">';
+  if (has(D.owner)) h += '<span class="chip">主理人 <b>' + esc(D.owner) + '</b></span>';
+  if (has(D.started)) h += '<span class="chip">开始于 <b>' + esc(D.started) + '</b></span>';
+  if (has(D.updated)) h += '<span class="chip">最近更新 <b>' + esc(D.updated) + '</b></span>';
+  h += '<span class="chip">当前 <b>' + (cur > 4 ? '冲刺第一桶金' : '第 ' + cur + ' 步') + '</b></span>';
+  h += '</div></div>';
+  h += '<div class="ring"><svg width="132" height="132"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8730C"/><stop offset="1" stop-color="#F7C948"/></linearGradient></defs>' +
+       '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="#F2E4D7" stroke-width="12"/>' +
+       '<circle cx="66" cy="66" r="' + R + '" fill="none" stroke="url(#g)" stroke-width="12" stroke-linecap="round" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/></svg>' +
+       '<div class="num"><strong>' + pct + '%</strong><span>' + done + ' / ' + total + ' 项完成</span></div></div>';
+  h += '</header>';
+
+  // journey
+  h += '<div class="journey">';
+  steps.forEach(function(s){
+    var st = s.status || 'not-started';
+    var icon = st === 'done' ? '✓' : (st === 'skipped' ? '–' : s.id);
+    h += '<div class="node ' + esc(st) + '"><div class="dot">' + esc(icon) + '</div><div class="label">' + esc(s.name) + '</div><div class="sub">' + esc(STATUS[st] || st) + '</div></div>';
+  });
+  h += '<div class="node gold' + (fg.done ? ' done' : '') + '"><div class="dot">🏅</div><div class="label">First Gold</div><div class="sub">' + (fg.done ? '开张大吉' : '终点') + '</div></div>';
+  h += '</div>';
+
+  // cards
+  h += '<div class="grid">';
+  steps.forEach(function(s){
+    var st = s.status || 'not-started';
+    h += '<section class="card ' + esc(st) + '"><div class="card-head"><div class="badge">' + (st === 'done' ? '✓' : esc(s.id)) + '</div><h2>' + esc(s.name) + '</h2><span class="pill ' + esc(st) + '">' + esc(STATUS[st] || st) + '</span></div>';
+    if (has(s.note)) h += '<div class="note">' + esc(s.note) + '</div>';
+    h += '<ul class="check">';
+    arr(s.checklist).forEach(function(c){ h += '<li class="' + (c.done ? 'done' : '') + '"><span class="box">' + (c.done ? '✓' : '') + '</span><span class="t">' + esc(c.text) + '</span></li>'; });
+    h += '</ul>';
+    h += widget(s.id);
+    var outs = arr(s.outputs);
+    if (outs.length) {
+      h += '<div class="outputs">';
+      outs.forEach(function(o){ h += '<a href="' + safeHref(o.path) + '" target="_blank" rel="noopener">' + esc(o.label || o.path) + '</a>'; });
+      h += '</div>';
+    }
+    h += '</section>';
+  });
+  h += '</div>';
+
+  // first gold banner
+  if (fg.done) {
+    h += '<div class="gold-banner done"><div class="medal">🏅</div><div><h3>开张大吉！收到了第一桶金</h3><p>' +
+         (has(fg.amount) ? '金额：' + esc(fg.amount) + '　' : '') + (has(fg.date) ? '日期：' + esc(fg.date) + '　' : '') + (has(fg.source) ? '来自：' + esc(fg.source) : '') + '</p></div></div>';
+  } else {
+    h += '<div class="gold-banner"><div class="medal">🏅</div><div><h3>终点：收到第一笔钱</h3><p>走完四步后，先问访谈过的用户愿不愿意付费，定一个小价格，选一个最简单的收款方式。</p></div></div>';
+  }
+
+  // log
+  var logs = arr(D.log).slice(-8).reverse();
+  h += '<div class="log"><h2>最近动态</h2>';
+  if (logs.length) { h += '<ul>'; logs.forEach(function(l){ h += '<li><time>' + esc(l.date) + '</time><span>' + esc(l.text) + '</span></li>'; }); h += '</ul>'; }
+  else h += '<p class="empty">还没有记录。和 First Gold 聊完第一轮后，这里会出现你的进展。</p>';
+  h += '</div>';
+  h += '<footer>由 First Gold Skill 生成 · 每轮对话后自动更新</footer>';
+
+  document.getElementById('app').innerHTML = h;
+
+  function widget(id){
+    var w = '';
+    if (id === 1) {
+      var d = D.direction || {}, sc = arr(d.scores), sum = 0, any = false;
+      if (sc.some(function(x){ return x.score !== null && x.score !== undefined; })) {
+        w += '<div class="section-title">四条标准打分</div><div class="scores">';
+        sc.forEach(function(x){
+          var v = Number(x.score) || 0; if (x.score !== null && x.score !== undefined) { any = true; sum += v; }
+          w += '<div class="row"><span class="l">' + esc(x.label) + '</span><span class="pips"><i class="pip' + (v >= 1 ? ' on' : '') + '"></i><i class="pip' + (v >= 2 ? ' on' : '') + '"></i></span></div>';
+        });
+        if (any) w += '<div class="total">总分 ' + sum + ' / 8</div>';
+        w += '</div>';
+      }
+      if (has(d.target_user)) w += '<div class="section-title">目标用户</div><p class="kv">' + esc(d.target_user) + '</p>';
+    }
+    if (id === 2) {
+      var L = arr(D.loops);
+      if (L.length) {
+        var ld = L.filter(function(x){ return x.status === 'done'; }).length;
+        w += '<div class="section-title">最小闭环 ' + ld + ' / ' + L.length + '</div><ul class="loops">';
+        L.forEach(function(x, i){ var t = x.status || 'todo'; w += '<li><span class="n">' + (i + 1) + '. ' + esc(x.name) + '</span><span class="tag ' + esc(t) + '">' + esc(LOOP[t] || t) + '</span></li>'; });
+        w += '</ul>';
+      }
+    }
+    if (id === 3) {
+      var la = D.launch || {}, P = arr(la.posts), g = la.group || {};
+      if (P.length) {
+        w += '<div class="section-title">发布记录</div><ul class="timeline">';
+        P.forEach(function(p){ w += '<li><b>' + esc(p.channel) + '</b> ' + esc(p.date) + (has(p.url) ? ' · <a class="link" href="' + safeHref(p.url) + '" target="_blank" rel="noopener">查看</a>' : '') + '</li>'; });
+        w += '</ul>';
+      }
+      if (has(g.name)) w += '<div class="section-title">反馈群</div><p class="kv">' + esc(g.name) + (g.members ? ' · ' + esc(g.members) + ' 人' : '') + '</p>';
+    }
+    if (id === 4) {
+      var m = D.metrics || {}, it = arr(D.iterations);
+      var tgt = Number(m.interviews_target) || 10, dn = Number(m.interviews_done) || 0;
+      if (has(m.uv) || has(m.dau) || has(m.retention)) {
+        w += '<div class="metrics"><div class="metric"><b>' + (has(m.uv) ? esc(m.uv) : '–') + '</b><span>UV</span></div><div class="metric"><b>' + (has(m.dau) ? esc(m.dau) : '–') + '</b><span>DAU</span></div><div class="metric"><b>' + (has(m.retention) ? esc(m.retention) : '–') + '</b><span>留存</span></div></div>';
+      }
+      if (dn > 0 || has(m.uv)) {
+        w += '<div class="section-title">用户访谈 ' + dn + ' / ' + tgt + '</div><div class="bar"><i style="width:' + Math.min(100, Math.round(dn / tgt * 100)) + '%"></i></div>';
+      }
+      if (it.length) {
+        w += '<div class="section-title">每周迭代</div><ul class="timeline">';
+        it.slice(-3).reverse().forEach(function(x){ w += '<li><b>' + esc(x.week) + '</b>' + (has(x.date) ? ' <span class="small">' + esc(x.date) + '</span>' : '') + '<br>' + esc(x.note) + '</li>'; });
+        w += '</ul>';
+      }
+    }
+    return w;
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+{
+  "version": 1,
+  "project": "简历面经雷达",
+  "slug": "mianjing-radar",
+  "one_liner": "帮准备暑期实习的大三同学，上传简历就自动找到对应岗位的面经，不用再一篇篇翻收藏夹。",
+  "owner": "小鹿（示例用户）",
+  "started": "2026-11-15",
+  "updated": "2026-11-22",
+  "current_step": 2,
+  "steps": [
+    {
+      "id": 1,
+      "name": "找方向",
+      "status": "done",
+      "note": "从 3 个候选里选了面经雷达：自己正在找实习，每天都要翻面经。",
+      "checklist": [
+        {
+          "text": "四条标准打分：前三条每条至少 1 分，总分至少 5 分",
+          "done": true
+        },
+        {
+          "text": "写出一句话需求",
+          "done": true
+        },
+        {
+          "text": "说出 1 个具体的目标用户",
+          "done": true
+        }
+      ],
+      "outputs": [
+        {
+          "label": "方向卡",
+          "path": "01-方向卡.md"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "搭架构",
+      "status": "in-progress",
+      "note": "可点击的 demo 已经确认，正在开发第一个闭环：分析简历。",
+      "checklist": [
+        {
+          "text": "有交互 UI 图",
+          "done": true
+        },
+        {
+          "text": "有可点击的前端 demo，并且自己确认了流程",
+          "done": true
+        },
+        {
+          "text": "拆出至少 3 个最小闭环",
+          "done": true
+        },
+        {
+          "text": "第一个闭环跑通",
+          "done": false
+        }
+      ],
+      "outputs": [
+        {
+          "label": "架构文档",
+          "path": "02-架构.md"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "宣发拉群",
+      "status": "not-started",
+      "note": "",
+      "checklist": [
+        {
+          "text": "宣发文案定稿",
+          "done": false
+        },
+        {
+          "text": "至少在 1 个渠道发布，并记录了链接",
+          "done": false
+        },
+        {
+          "text": "反馈群已经建好",
+          "done": false
+        }
+      ],
+      "outputs": []
+    },
+    {
+      "id": 4,
+      "name": "反馈迭代",
+      "status": "not-started",
+      "note": "",
+      "checklist": [
+        {
+          "text": "访问统计已经上线（只看汇总数据）",
+          "done": false
+        },
+        {
+          "text": "完成 10 个用户访谈",
+          "done": false
+        },
+        {
+          "text": "写完第一份周迭代记录",
+          "done": false
+        }
+      ],
+      "outputs": []
+    }
+  ],
+  "direction": {
+    "scores": [
+      {
+        "label": "懂这个领域",
+        "score": 1
+      },
+      {
+        "label": "真需求且自己会一直用",
+        "score": 2
+      },
+      {
+        "label": "能触达前 100 个用户",
+        "score": 2
+      },
+      {
+        "label": "结合热点",
+        "score": 1
+      }
+    ],
+    "target_user": "大三金融专业、正在投暑期实习的同学，每天睡前在小红书翻面经，收藏了几百篇但找不到想要的那篇。"
+  },
+  "loops": [
+    {
+      "name": "分析简历，推断 3 个适合的岗位方向",
+      "status": "doing"
+    },
+    {
+      "name": "按岗位关键词抓取小红书面经",
+      "status": "todo"
+    },
+    {
+      "name": "把面经和简历匹配，按相关度排序",
+      "status": "todo"
+    }
+  ],
+  "launch": {
+    "posts": [],
+    "group": {
+      "name": "",
+      "members": 0
+    }
+  },
+  "metrics": {
+    "uv": null,
+    "dau": null,
+    "retention": "",
+    "interviews_done": 0,
+    "interviews_target": 10
+  },
+  "iterations": [],
+  "first_gold": {
+    "done": false,
+    "amount": "",
+    "date": "",
+    "source": ""
+  },
+  "log": [
+    {
+      "date": "2026-11-15",
+      "text": "建立档案：金融专业，身边都是在找实习的同学。"
+    },
+    {
+      "date": "2026-11-16",
+      "text": "列出 3 个候选方向，打分后选定“简历面经雷达”（6/8 分）。"
+    },
+    {
+      "date": "2026-11-18",
+      "text": "画出 4 个关键页面的线框图。"
+    },
+    {
+      "date": "2026-11-20",
+      "text": "做好可点击的 demo，自己点了一遍，把“上传简历”挪到了首页。"
+    },
+    {
+      "date": "2026-11-22",
+      "text": "拆出 3 个最小闭环，开始开发第一个：分析简历。"
+    }
+  ]
+}
