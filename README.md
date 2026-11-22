@@ -79,6 +79,12 @@ first-gold/
 
 想先看看效果，可以打开 [`examples/mianjing-radar/`](examples/mianjing-radar/)：这是一个虚构的用户做“简历面经雷达”走到第 2 步时的样子。
 
+## 分享进度，帮 First Gold 变得更好
+
+进度页最下面有一个「分享我的进度」按钮。点一下会打开一个 GitHub issue 表单，自动带上你走到第几步、完成了几项，不带档案和项目内容。提交前你能看到并修改全部内容，提交后是公开的。也可以直接[在这里分享](https://github.com/JoyceJin0913/first-gold/issues/new?template=share-progress.yml)。
+
+**隐私说明**：本地生成的进度页不会联网上报任何东西。[在线进度页](https://joycejin0913.github.io/first-gold/)只用 [GoatCounter](https://www.goatcounter.com/) 匿名统计打开次数、所在步骤和打开方式，不用 cookie，不上传你的名字、档案、项目内容和链接里的参数。
+
 ## 搭配 LLM Wiki 知识库
 
 如果你的工作目录里有 `AGENTS.md` 和 `raw/sessions/`（Karpathy 风格的 LLM Wiki 知识库），First Gold 会在每次对话结束时，把这次的决定和产出记一篇到 `raw/sessions/`，你的知识库会越用越完整。

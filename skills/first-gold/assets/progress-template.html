@@ -138,6 +138,11 @@ a.link{color:var(--orange-deep)}
 .log li time{color:var(--ink-3);flex:0 0 88px}
 footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
 .empty{font-size:13px;color:var(--ink-3)}
+.share{margin-top:22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:rgba(255,255,255,.75);border:1px dashed #E8CFA8;border-radius:var(--radius);padding:14px 18px}
+.share p{font-size:13px;color:var(--ink-2);flex:1 1 320px}
+.share p b{color:var(--ink)}
+.share a{flex:0 0 auto;background:var(--orange);color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:8px 16px;border-radius:999px;transition:background .2s var(--ease)}
+.share a:hover{background:var(--orange-deep)}
 
 @media (max-width:760px){
   .grid{grid-template-columns:1fr}
@@ -194,13 +199,19 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
   "metrics": {"uv": null, "dau": null, "retention": "", "interviews_done": 0, "interviews_target": 10},
   "iterations": [],
   "first_gold": {"done": false, "amount": "", "date": "", "source": ""},
+  "share_asked": false,
   "log": []
 }
 </script>
 
 <script>
 (function(){
-  var D;
+  // 作者的 GitHub 仓库：「分享我的进度」按钮会在这里新建一条 issue
+  var REPO = 'JoyceJin0913/first-gold';
+  // GoatCounter 站点代码（例如 'first-gold'）。留空就不统计。
+  // 只在在线页面（*.github.io）生效，只发送步骤编号和打开方式，不发送档案、项目名和链接里的任何内容。
+  var GOATCOUNTER = '';
+  var D, source;
   function fromHash(){
     var m = /[#&]d=([A-Za-z0-9_-]+)/.exec(location.hash || '');
     if (!m) return null;
@@ -248,9 +259,12 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
   var onlinePage = /github\.io$/.test(location.hostname);
   try {
     var embedded = JSON.parse(document.getElementById('fg-data').textContent);
-    D = fromHash() || fromParams(embedded);
-    if (D) { if (onlinePage) remember(D); }
-    else D = (onlinePage && recall()) || embedded;
+    var fromLink = fromHash();
+    if (fromLink) source = 'hash';
+    else { fromLink = fromParams(embedded); if (fromLink) source = 'params'; }
+    if (fromLink) { D = fromLink; if (onlinePage) remember(D); }
+    else if (onlinePage) { D = recall(); source = D ? 'saved' : 'blank'; if (!D) D = embedded; }
+    else { D = embedded; source = location.protocol === 'file:' ? 'file' : 'chat'; }
   }
   catch (e) { document.getElementById('app').innerHTML = '<p style="padding:40px">progress.json 格式有误，无法显示进度：' + String(e.message).replace(/</g,'&lt;') + '</p>'; return; }
 
@@ -267,6 +281,17 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
   var pct = total ? Math.round(done / total * 100) : 0;
   var cur = (D.current_step === 0) ? 0 : (D.current_step || 1);
   var fg = D.first_gold || {};
+  var SRC = {
+    hash: '在线链接（进度存在链接里）', params: '在线个人链接', saved: '在线页面（浏览器记住的进度）',
+    blank: '在线页面（还没有进度）', file: '本地文件（AI 在电脑上生成）', chat: '对话里的网页（artifact / canvas）'
+  };
+  function stepLabel(n){
+    if (n === 0) return '第 0 步 · 建立档案';
+    if (n > 4) return '冲刺第一桶金';
+    var s = steps.filter(function(x){ return x.id === n; })[0];
+    return '第 ' + n + ' 步' + (s ? ' · ' + s.name : '');
+  }
+  var statsOn = onlinePage && /^[a-z0-9-]+$/.test(GOATCOUNTER);
 
   var h = '';
   // header
@@ -344,9 +369,50 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
   if (logs.length) { h += '<ul>'; logs.forEach(function(l){ h += '<li><time>' + esc(l.date) + '</time><span>' + esc(l.text) + '</span></li>'; }); h += '</ul>'; }
   else h += '<p class="empty">还没有记录。和 First Gold 聊完第一轮后，这里会出现你的进展。</p>';
   h += '</div>';
-  h += '<footer>First Gold · 根据档案找到你的第一个 AI 产品方向 · 每轮对话后自动更新</footer>';
+  h += '<div class="share"><p><b>这个进度页对你有帮助吗？</b>把进度分享给作者，帮 First Gold 变得更好。只会自动带上步骤和完成数量，不带档案和项目内容；提交前你能看到并修改全部内容，提交后是公开的。</p>' +
+       '<a href="' + esc(shareUrl()) + '" target="_blank" rel="noopener">分享我的进度</a></div>';
+  h += '<footer>First Gold · 根据档案找到你的第一个 AI 产品方向 · 每轮对话后自动更新' +
+       (statsOn ? '<br>在线页面会匿名统计打开次数、所在步骤和打开方式，不记录你的档案和项目内容' : '') + '</footer>';
 
   document.getElementById('app').innerHTML = h;
+  stats();
+
+  // 分享：预填一条 GitHub issue，只含步骤和数量
+  function shareUrl(){
+    var count = function(a){ return arr(a).filter(function(x){ return x.done; }).length; };
+    var dir = D.direction || {}, m = D.metrics || {}, la = D.launch || {};
+    var scored = arr(dir.scores).filter(function(x){ return x.score !== null && x.score !== undefined; }).length;
+    var lines = [
+      '当前：' + stepLabel(cur) + (fg.done ? '（已收到第一桶金）' : ''),
+      '完成：' + done + ' / ' + total + ' 项',
+      steps.map(function(s){ return s.name + ' ' + count(s.checklist) + '/' + arr(s.checklist).length; }).join(' · '),
+      '档案：' + (hasPf ? '已建立' : '还没建立'),
+      '页面上有：方向打分 ' + scored + '/4 · 最小闭环 ' + arr(D.loops).length + ' 个 · 发布记录 ' + arr(la.posts).length + ' 条 · 访谈 ' + (Number(m.interviews_done) || 0) + ' 个 · 周迭代 ' + arr(D.iterations).length + ' 份 · 动态 ' + arr(D.log).length + ' 条',
+      '进度页怎么打开的：' + SRC[source]
+    ];
+    if (has(D.updated)) lines.push('最近更新：' + D.updated);
+    return 'https://github.com/' + REPO + '/issues/new?template=share-progress.yml' +
+           '&title=' + encodeURIComponent('[进度分享] ' + stepLabel(cur)) +
+           '&summary=' + encodeURIComponent(lines.join('\n'));
+  }
+
+  // 匿名统计：GoatCounter 计数像素。不加载第三方脚本，不用 cookie，不发送链接参数。
+  function stats(){
+    if (!statsOn) return;
+    var ref = '';
+    try { if (document.referrer) { var u = new URL(document.referrer); if (u.hostname !== location.hostname) ref = u.origin; } } catch (e) {}
+    function hit(path, title, isEvent){
+      var img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.src = 'https://' + GOATCOUNTER + '.goatcounter.com/count?p=' + encodeURIComponent(path) +
+                '&t=' + encodeURIComponent(title) + '&e=' + (isEvent ? 'true' : 'false') +
+                (ref && !isEvent ? '&r=' + encodeURIComponent(ref) : '') +
+                '&s=' + encodeURIComponent([screen.width, screen.height, window.devicePixelRatio || 1].join(',')) +
+                '&rnd=' + Math.random().toString(36).slice(2);
+    }
+    hit(fg.done ? '/first-gold' : '/step-' + cur, fg.done ? '已收到第一桶金' : stepLabel(cur), false);
+    hit('打开方式-' + source, SRC[source], true);
+  }
 
   function widget(id){
     var w = '';

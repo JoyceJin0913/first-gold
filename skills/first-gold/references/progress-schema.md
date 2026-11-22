@@ -21,6 +21,7 @@
 | `metrics` | 第 4 步：`uv`、`dau`、`retention`（文字，如“次日 30%”）、`interviews_done`、`interviews_target`（默认 10） |
 | `iterations[]` | 第 4 步：每周迭代，`week`、`date`、`note` |
 | `first_gold` | 终点：`done`（true / false）、`amount`、`date`、`source` |
+| `share_asked` | 是否已经邀请过用户分享进度（只问一次），默认 `false` |
 | `log[]` | 每轮对话一行：`date`、`text`，新的追加在末尾 |
 
 ### steps[] 中每一项
@@ -102,6 +103,7 @@
   "metrics": {"uv": null, "dau": null, "retention": "", "interviews_done": 0, "interviews_target": 10},
   "iterations": [],
   "first_gold": {"done": false, "amount": "", "date": "", "source": ""},
+  "share_asked": false,
   "log": []
 }
 ```

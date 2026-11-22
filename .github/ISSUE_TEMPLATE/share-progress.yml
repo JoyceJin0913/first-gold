@@ -1,0 +1,48 @@
+name: 分享我的进度
+description: 把你的 First Gold 进度分享给作者，帮这个 Skill 变得更好（内容会公开）
+title: "[进度分享] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢你愿意分享！
+        ⚠️ issue 是**公开的**，任何人都能看到。提交前请删掉你不想公开的信息，比如真实姓名、学校、公司、还没公开的产品点子。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 进度摘要
+      description: 从进度页点「分享我的进度」会自动填好，只有步骤和数量，不含档案和项目内容。
+      placeholder: |
+        当前：第 2 步 · 搭架构
+        完成：5 / 13 项
+  - type: dropdown
+    id: tool
+    attributes:
+      label: 你是用哪个 AI 工具跑 First Gold 的？
+      options:
+        - Claude Code
+        - Codex
+        - Cursor
+        - CodeBuddy
+        - Claude 网页版 / App
+        - ChatGPT
+        - 豆包
+        - Kimi
+        - 其他（写在下面）
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 进度页截图（可选）
+      description: 把截图直接拖进来或粘贴。截图前可以先把不想公开的内容遮住。
+  - type: textarea
+    id: stuck
+    attributes:
+      label: 你卡在哪了？有什么想吐槽或建议的？
+      description: 比如：哪一步最难、AI 哪里带偏了、进度页哪里看不懂、希望多一个什么功能。
+  - type: checkboxes
+    id: consent
+    attributes:
+      label: 确认
+      options:
+        - label: 我知道这条内容会公开，已经删掉了不想公开的信息
+          required: true

@@ -13,4 +13,5 @@ When a user shares this repository and asks you to guide them to build an app / 
 3. Update the progress page after every round.
 
 Repository maintenance:
+- Anonymous stats: the `GOATCOUNTER` constant in the template. It only runs on `*.github.io` and only sends the step number and how the page was opened, never profile or project content. Shared progress arrives as GitHub issues from `.github/ISSUE_TEMPLATE/share-progress.yml` (title starts with `[进度分享]`).
 - `docs/index.html` is the hosted copy of `skills/first-gold/assets/progress-template.html`. After changing the template, copy it: `cp skills/first-gold/assets/progress-template.html docs/index.html`.
