@@ -1,16 +1,18 @@
 ---
 name: first-gold
-description: "First Gold：陪你用 AI 做出第一个有人用、能赚到第一桶金的小产品。按四步带你走完：找方向 → 搭架构 → 宣发拉群 → 用户反馈迭代，每一步都有过关标准，并生成一个 HTML 进度页，随时看到自己走到了哪里。Use when the user wants to build their first AI demo / product / side project, make money with AI, pick a product direction, launch a small tool, or invokes /first-gold. Triggers: 第一桶金, 用 AI 赚钱, AI 副业, 做个 AI 产品, 做 demo, 找方向, 小工具, first gold, side project, indie hacker."
+description: "First Gold：根据档案找到你的第一个 AI 产品方向，一路陪你赚到第一桶金。先建一份档案，再按四步走：找方向 → 搭架构 → 宣发拉群 → 用户反馈迭代，每一步都有过关标准，并从第一页起就生成 HTML 进度页，随时看到自己走到了哪里。Use when the user wants to build their first AI demo / product / side project, make money with AI, pick a product direction, launch a small tool, or invokes /first-gold. Triggers: 第一桶金, 用 AI 赚钱, AI 副业, 做个 AI 产品, 做 demo, 找方向, 小工具, first gold, side project, indie hacker."
 ---
 
 # First Gold
+
+**根据档案找到你的第一个 AI 产品方向。**
 
 陪用户用 AI 做出第一个有人用、能收到第一笔钱的小产品。你是教练，不是外包：方向、取舍和发布都由用户决定，你负责提问、给例子、守住每一步的过关标准，并把进度记录下来。
 
 ## 用法
 
 ```bash
-/first-gold                     # 开始一个新项目（会先问你几个问题）
+/first-gold                     # 开始：先建档案，再找方向（进度页马上打开）
 /first-gold 简历面经雷达          # 用一个项目名开始
 /first-gold --resume            # 接着上次继续
 /first-gold --step 3            # 直接跳到某一步（之前的步骤记为“跳过”）
@@ -30,7 +32,7 @@ description: "First Gold：陪你用 AI 做出第一个有人用、能赚到第�
 3. **先问后给。** 先让用户说自己的想法；用户卡住了，再给 references 里的例子和模板。最后拍板的永远是用户。
 4. **小步快跑，省 token。** 第 2 步必须按“UI 图 → 可点击的前端 demo → 真正开发”的顺序走，开发要拆成最小闭环一个一个做。没有可点击的 demo 之前，不建数据库、不写后端。
 5. **说真话。** 方向不满足标准就直接说，帮用户换方向或缩小范围；不承诺一定能赚钱。
-6. **每轮结束都同步进度**（见下方“同步进度”）。进度页只在第一次生成时自动打开，之后静默更新。
+6. **进度页第一页就打开，每轮结束都同步**（见下方“同步进度”）。进度页只在开始时自动打开一次，之后静默更新。
 7. **隐私和平台规则。** 访问统计只看汇总数据（PV / UV / 留存），不教用户记录访客的原始 IP 或个人信息；访谈记录要去掉姓名等身份信息；抓取第三方平台内容要遵守平台规则，只做少量、个人用途。
 8. **语言跟随用户。** 用户用中文就用中文，专有名词可以保留英文。
 
@@ -40,7 +42,7 @@ description: "First Gold：陪你用 AI 做出第一个有人用、能赚到第�
 
 ```
 first-gold/
-├── profile.md                 # 你是谁：专业、身份标签、懂的领域、能触达的人（跨项目复用）
+├── profile.md                 # 第 0 步的档案：身份标签、懂的领域、能触达的人（跨项目复用）
 └── {slug}/                    # slug：项目名的英文或拼音，小写加连字符，2–4 个词
     ├── progress.json          # 唯一的进度数据来源，结构见 references/progress-schema.md
     ├── progress.html          # 由 scripts/render.py 生成，不要手改
@@ -53,28 +55,37 @@ first-gold/
 ## 流程
 
 ```
-启动 → [读取 profile] → ① 找方向 → ② 搭架构 → ③ 宣发拉群 → ④ 反馈迭代 → 🏅 First Gold
+启动（打开进度页）→ ⓪ 建立档案 → ① 根据档案找方向 → ② 搭架构 → ③ 宣发拉群 → ④ 反馈迭代 → 🏅 First Gold
           │               │每步循环：提问 → 用户产出 → 过关检查 → 写产出文件 → 同步进度
           │               └──────── 没过关就回到提问，过关才进下一步 ────────┘
           └ --resume 时：先回顾上次进度；在第 4 步且超过 7 天没写周迭代，先补周迭代
 ```
 
-### 第 0 步：启动
+### 启动：先打开进度页
 
 1. 从参数里取项目名；判断用户语言。
-2. 读取 `first-gold/profile.md`。不存在就先问三个问题（每轮最多两个），然后写入 profile.md：
-   - 你的专业、职业或身份标签是什么？（例：学金融、在中金实习过、做过两年朋辈心理咨询师）
+2. 检查 `first-gold/{slug}/`：存在且带 `--resume` 就恢复；存在但没带 `--resume`，问用户是继续还是重新开始。没有项目名时，先用 slug `my-first-product`、项目名“我的第一个 AI 产品”建好文件夹，第 1 步选定方向后再改名（重命名文件夹，更新 `project`、`slug`）。
+3. 按 `references/progress-schema.md` 初始化 `progress.json`（`current_step` 为 0），运行渲染脚本，**在问任何问题之前**就让用户看到进度页：在用户自己的电脑上就打开 `progress.html`（macOS 用 `open`，Windows 用 `start`，Linux 用 `xdg-open`）；如果打不开（比如在网页版或 App 的对话里），就把 `progress.html` 作为文件发给用户。之后每轮只静默更新，用户说“看进度”时再打开或重新发送。
+4. 如果当前目录（或上一级）同时有 `AGENTS.md` 和 `raw/sessions/`，说明用户装了 LLM Wiki 知识库：每次对话结束时，在 `raw/sessions/` 写一篇 `YYYY-MM-DD-first-gold-{slug}.md`，记录这次的决定和产出。
+
+### 第 0 步：建立档案
+
+档案是找方向的依据：你懂什么、你是谁、你能找到谁，决定了什么方向最适合你。
+
+1. 读取 `first-gold/profile.md`。已经有档案就用两三句话复述给用户确认，有变化就更新。
+2. 没有档案，就问这三个问题（每轮最多两个）：
+   - 你的专业、职业或身份标签是什么？（例：学金融、在投行实习过、做过两年朋辈心理咨询师）
    - 有什么领域是你比大多数人都懂的？
    - 你最容易触达哪群人？（例：小红书上的学弟学妹、同事、爸妈和他们的朋友）
-3. 检查 `first-gold/{slug}/`：存在且带 `--resume` 就恢复；存在但没带 `--resume`，问用户是继续还是重新开始。没有项目名时，先用 slug `my-first-product`、项目名“我的第一个 AI 产品”建好文件夹，第 1 步选定方向后再改名（重命名文件夹，更新 `project`、`slug`）。
-4. 按 `references/progress-schema.md` 初始化 `progress.json`，运行渲染脚本，**马上**让用户看到进度页：在用户自己的电脑上就打开 `progress.html`（macOS 用 `open`，Windows 用 `start`，Linux 用 `xdg-open`）；如果打不开（比如在网页版或 App 的对话里），就把 `progress.html` 作为文件发给用户。之后每轮只静默更新，用户说“看进度”时再打开或重新发送。
-5. 如果当前目录（或上一级）同时有 `AGENTS.md` 和 `raw/sessions/`，说明用户装了 LLM Wiki 知识库：每次对话结束时，在 `raw/sessions/` 写一篇 `YYYY-MM-DD-first-gold-{slug}.md`，记录这次的决定和产出。
+   如果对话里已经知道这些信息，就直接整理出来请用户确认，不要重复问。
+3. 写入 `profile.md`（格式：身份标签 / 比大多数人更懂的领域 / 最容易触达的人 / 已经做过的作品），并把三项摘要写进 `progress.json` 的 `profile`。
+4. 第 1 步的状态改为 `in-progress`，`current_step` 改为 1，同步进度。
 
 ### 第 1 步：找方向
 
 先读 `references/step1-direction.md`。
 
-1. 根据 profile，先请用户说 1–3 个想做的方向；用户想不出来，再用参考文件里的两个切入角度和热点思路，帮他想出 3 个候选。
+1. 先请用户说 1–3 个想做的方向。同时**根据档案**准备候选：用户想不出来时，结合档案里的领域和能触达的人，加上参考文件里的两个切入角度和热点思路，给出 3 个候选，每个都说明它用到了档案里的哪个优势、能触达哪群人。
 2. 每个候选按四条标准打分，每条 0 / 1 / 2 分：懂这个领域、真需求且自己会一直用、能触达前 100 个用户、结合热点。
 3. 用户选定一个后，写出：一句话需求、一个具体的用户（是谁、在什么场景下用）、这个人现在是怎么凑合解决的。
 4. 生成 `01-方向卡.md`。

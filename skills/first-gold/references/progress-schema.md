@@ -12,7 +12,8 @@
 | `one_liner` | 一句话需求：帮谁在什么场景解决什么问题 |
 | `owner` | 用户的称呼 |
 | `started` / `updated` | 开始日期 / 最近更新日期，格式 `YYYY-MM-DD` |
-| `current_step` | 当前所在步骤，1–4；四步都完成后写 `5` |
+| `current_step` | 当前所在步骤：`0` = 建立档案，1–4 = 四步，四步都完成后写 `5` |
+| `profile` | 第 0 步的档案摘要（从 `profile.md` 复制）：`identity` 身份标签、`expertise` 比别人懂的领域、`reach` 能触达的人，各写一两句话 |
 | `steps[]` | 四个步骤，顺序固定，见下方 |
 | `direction` | 第 1 步：四条标准的打分（每条 0–2，未打分写 `null`）和目标用户 |
 | `loops[]` | 第 2 步：最小闭环，`status` 为 `todo` / `doing` / `done` |
@@ -46,10 +47,11 @@
   "owner": "",
   "started": "YYYY-MM-DD",
   "updated": "YYYY-MM-DD",
-  "current_step": 1,
+  "current_step": 0,
+  "profile": {"identity": "", "expertise": "", "reach": ""},
   "steps": [
     {
-      "id": 1, "name": "找方向", "status": "in-progress", "note": "",
+      "id": 1, "name": "找方向", "status": "not-started", "note": "",
       "checklist": [
         {"text": "四条标准打分：前三条每条至少 1 分，总分至少 5 分", "done": false},
         {"text": "写出一句话需求", "done": false},
@@ -106,6 +108,7 @@
 
 ## 更新规则
 
+- 档案建好后，把三项写进 `profile`，第 1 步的 `status` 改为 `in-progress`，`current_step` 改为 1。
 - 一个步骤的清单全部 `done` 后，把它的 `status` 改为 `done`，下一步改为 `in-progress`，`current_step` 加 1。
 - 用户要求跳过时，把 `status` 改为 `skipped`，在 `note` 里写原因。
 - 每轮都要更新 `updated`，并在 `log` 里追加一行。

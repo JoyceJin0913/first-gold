@@ -7,6 +7,11 @@
   "started": "2026-11-15",
   "updated": "2026-11-22",
   "current_step": 2,
+  "profile": {
+    "identity": "大三金融专业，正在找暑期实习",
+    "expertise": "券商和互联网的实习求职、面经整理",
+    "reach": "同专业的实习交流群、小红书上找实习的同学"
+  },
   "steps": [
     {
       "id": 1,
