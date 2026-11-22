@@ -7,6 +7,20 @@ description: "First Gold：根据档案找到你的第一个 AI 产品方向，�
 
 **根据档案找到你的第一个 AI 产品方向。**
 
+## ⚠️ 第一件事：先让用户看到进度页，再说别的
+
+用户一说“用 First Gold 带我做一个 App”（或者发来这个仓库的链接），你的**第一条回复就要带着进度页**。不要先介绍流程，不要先提问，也不要等用户确认方向：进度页是用户的锚点，没有它，用户很难坚持走完。生成进度页不算“写代码”，不需要用户批准。
+
+按你能做到的程度，选第一种做得到的：
+
+1. **能运行命令、能写文件**（Claude Code、Codex、CodeBuddy 等）：按下方“启动”一节建好 `first-gold/my-first-product/progress.json`，运行 `scripts/render.py`，在用户电脑上打开 `progress.html`；打不开就把文件发给用户。
+2. **不能运行命令，但能在对话里输出网页或文件**（Artifact、Canvas、文件附件等）：读取 `assets/progress-template.html`（在线地址：`https://raw.githubusercontent.com/JoyceJin0913/first-gold/main/skills/first-gold/assets/progress-template.html`），把 `<script id="fg-data" type="application/json">` 里的数据换成这位用户的初始进度，作为一个可预览的网页发给用户。
+3. **什么都不能创建**：把在线进度页的链接发给用户，请他先打开：`https://joycejin0913.github.io/first-gold/`
+
+之后每完成一轮，都用同样的方式更新进度页。
+
+---
+
 陪用户用 AI 做出第一个有人用、能收到第一笔钱的小产品。你是教练，不是外包：方向、取舍和发布都由用户决定，你负责提问、给例子、守住每一步的过关标准，并把进度记录下来。
 
 ## 用法
@@ -27,6 +41,7 @@ description: "First Gold：根据档案找到你的第一个 AI 产品方向，�
 
 ## 核心规则（必须遵守）
 
+0. **进度页先行。** 第一条回复就要让用户看到进度页（见开头“第一件事”），之后每轮都更新。
 1. **一次只推进一步。** 当前步骤的过关清单全部完成才进入下一步。用户坚持要跳，就标记 `skipped`，写清原因，之后可以回来补。
 2. **每轮最多问 1–2 个问题。** 有提问工具（如 AskUserQuestion）时，选择题用它；开放题直接用文字问。
 3. **先问后给。** 先让用户说自己的想法；用户卡住了，再给 references 里的例子和模板。最后拍板的永远是用户。
@@ -151,6 +166,7 @@ first-gold/
    ```bash
    python3 <本 Skill 目录>/scripts/render.py first-gold/{slug}/progress.json
    ```
+   用户不在自己电脑上（比如在网页版对话里）时，加上 `--link`，脚本会额外输出一个在线进度页链接（进度数据就在链接里），直接发给用户。
 3. 没有 Python 时：把 `assets/progress-template.html` 复制为 `first-gold/{slug}/progress.html`，把里面 `<script id="fg-data" type="application/json">` 和 `</script>` 之间的内容替换成 `progress.json` 的完整内容（把其中的 `</` 写成 `<\/`）。
 4. 不要每轮都打开浏览器或重新发送。用户说“看进度”时才打开或发送。
 

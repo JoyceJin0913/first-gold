@@ -201,7 +201,16 @@ footer{text-align:center;font-size:12px;color:var(--ink-3);margin-top:26px}
 <script>
 (function(){
   var D;
-  try { D = JSON.parse(document.getElementById('fg-data').textContent); }
+  function fromHash(){
+    var m = /[#&]d=([A-Za-z0-9_-]+)/.exec(location.hash || '');
+    if (!m) return null;
+    var b = m[1].replace(/-/g, '+').replace(/_/g, '/');
+    while (b.length % 4) b += '=';
+    var bin = atob(b), bytes = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return JSON.parse(new TextDecoder('utf-8').decode(bytes));
+  }
+  try { D = fromHash() || JSON.parse(document.getElementById('fg-data').textContent); }
   catch (e) { document.getElementById('app').innerHTML = '<p style="padding:40px">progress.json 格式有误，无法显示进度：' + String(e.message).replace(/</g,'&lt;') + '</p>'; return; }
 
   var STATUS = {"done":"已完成","in-progress":"进行中","not-started":"未开始","skipped":"已跳过"};

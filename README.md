@@ -2,6 +2,14 @@
 
 > **根据档案找到你的第一个 AI 产品方向**
 
+> [!IMPORTANT]
+> **给 AI 助手：** 如果用户把这个仓库发给你，让你带他做一个 App，请按 [`skills/first-gold/SKILL.md`](skills/first-gold/SKILL.md) 执行，并且**第一条回复就先让用户看到进度页**，再开始提问：
+> 1. 能运行命令：用 `skills/first-gold/scripts/render.py` 生成 `progress.html` 并打开；
+> 2. 只能在对话里输出网页或文件：把 [`progress-template.html`](skills/first-gold/assets/progress-template.html) 填上用户的初始进度，作为网页发出来；
+> 3. 什么都不能创建：请用户打开在线进度页 https://joycejin0913.github.io/first-gold/
+>
+> **给用户：** 把这个仓库链接发给你的 AI，说“用 First Gold 带我做一个 App”就能开始。
+
 First Gold 是一个 AI Agent Skill：它像一个教练，先了解你是谁、懂什么、能找到谁，再陪你从 0 做出第一个**有人用、能收到第一笔钱**的 AI 小产品。
 
 它不会替你做决定，而是一步一步问你、给你例子、帮你守住每一步的标准。从第一页开始就会生成一个 **HTML 进度页**，让你随时看到自己走到了哪里。

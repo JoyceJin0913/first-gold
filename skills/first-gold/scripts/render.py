@@ -3,25 +3,31 @@
 
 Usage:
     python3 render.py first-gold/<slug>/progress.json [output.html]
+    python3 render.py first-gold/<slug>/progress.json --link   # also print an online link
 
 The page is built from ../assets/progress-template.html: only the JSON inside
 <script id="fg-data" type="application/json"> is replaced, so the look stays the
 same every time. Output defaults to progress.html next to progress.json.
 """
+import base64
 import json
 import sys
 from pathlib import Path
+
+ONLINE_PAGE = "https://joycejin0913.github.io/first-gold/"
 
 START_TAG = '<script id="fg-data" type="application/json">'
 END_TAG = "</script>"
 
 
 def main() -> int:
-    if len(sys.argv) < 2:
-        print("usage: python3 render.py path/to/progress.json [output.html]")
+    args = [a for a in sys.argv[1:] if a != "--link"]
+    want_link = "--link" in sys.argv[1:]
+    if not args:
+        print("usage: python3 render.py path/to/progress.json [output.html] [--link]")
         return 1
 
-    src = Path(sys.argv[1])
+    src = Path(args[0])
     try:
         data = json.loads(src.read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -48,9 +54,14 @@ def main() -> int:
     payload = json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
     out = html[:start] + "\n" + payload + "\n" + html[end:]
 
-    dst = Path(sys.argv[2]) if len(sys.argv) > 2 else src.with_name("progress.html")
+    dst = Path(args[1]) if len(args) > 1 else src.with_name("progress.html")
     dst.write_text(out, encoding="utf-8")
     print(f"wrote {dst}")
+
+    if want_link:
+        compact = json.dumps(data, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        token = base64.urlsafe_b64encode(compact).decode("ascii").rstrip("=")
+        print(f"link: {ONLINE_PAGE}#d={token}")
     return 0
 
 
