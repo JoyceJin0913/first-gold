@@ -66,8 +66,8 @@ first-gold/
    - 你的专业、职业或身份标签是什么？（例：学金融、在中金实习过、做过两年朋辈心理咨询师）
    - 有什么领域是你比大多数人都懂的？
    - 你最容易触达哪群人？（例：小红书上的学弟学妹、同事、爸妈和他们的朋友）
-3. 检查 `first-gold/{slug}/`：存在且带 `--resume` 就恢复；存在但没带 `--resume`，问用户是继续还是重新开始。没有项目名时，先在第 1 步找到方向，再起 slug 建文件夹。
-4. 按 `references/progress-schema.md` 初始化 `progress.json`，运行渲染脚本，第一次生成后打开 `progress.html`（macOS 用 `open`，Windows 用 `start`，Linux 用 `xdg-open`）。
+3. 检查 `first-gold/{slug}/`：存在且带 `--resume` 就恢复；存在但没带 `--resume`，问用户是继续还是重新开始。没有项目名时，先用 slug `my-first-product`、项目名“我的第一个 AI 产品”建好文件夹，第 1 步选定方向后再改名（重命名文件夹，更新 `project`、`slug`）。
+4. 按 `references/progress-schema.md` 初始化 `progress.json`，运行渲染脚本，**马上**让用户看到进度页：在用户自己的电脑上就打开 `progress.html`（macOS 用 `open`，Windows 用 `start`，Linux 用 `xdg-open`）；如果打不开（比如在网页版或 App 的对话里），就把 `progress.html` 作为文件发给用户。之后每轮只静默更新，用户说“看进度”时再打开或重新发送。
 5. 如果当前目录（或上一级）同时有 `AGENTS.md` 和 `raw/sessions/`，说明用户装了 LLM Wiki 知识库：每次对话结束时，在 `raw/sessions/` 写一篇 `YYYY-MM-DD-first-gold-{slug}.md`，记录这次的决定和产出。
 
 ### 第 1 步：找方向
@@ -141,7 +141,7 @@ first-gold/
    python3 <本 Skill 目录>/scripts/render.py first-gold/{slug}/progress.json
    ```
 3. 没有 Python 时：把 `assets/progress-template.html` 复制为 `first-gold/{slug}/progress.html`，把里面 `<script id="fg-data" type="application/json">` 和 `</script>` 之间的内容替换成 `progress.json` 的完整内容（把其中的 `</` 写成 `<\/`）。
-4. 不要每轮都打开浏览器。用户说“看进度”时才打开。
+4. 不要每轮都打开浏览器或重新发送。用户说“看进度”时才打开或发送。
 
 ## 恢复（--resume）
 
